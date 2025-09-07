@@ -1,9 +1,12 @@
-// Serve privacy policy for OAuth providers
-const path = require('path');
-app.get('/privacy-policy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'privacy.html'));
-});
 require('dotenv').config();
+const path = require('path');
+// ...existing code...
+
+// Serve privacy policy for OAuth providers (if needed)
+// (Uncomment if you want to serve a local privacy.html file)
+// app.get('/privacy-policy', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'privacy.html'));
+// });
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
