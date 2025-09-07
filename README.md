@@ -1,4 +1,3 @@
-
 # SM-Login-Service
 This service authenticates user logins via social media sites using a MERN architecture
 
@@ -87,5 +86,34 @@ The frontend will run on [http://localhost:3000](http://localhost:3000) by defau
 - Open [http://localhost:3000](http://localhost:3000) in your browser.
 - Click a social login button to authenticate.
 - After login, you will be redirected to a success page with a button to view your user info.
+
+## Social Media Authentication Flow Diagrams
+
+### Google/LinkedIn OAuth 2.0 Flow
+
+```mermaid
+sequenceDiagram
+	participant User
+	participant Frontend
+	participant Backend
+	participant Provider as Google/LinkedIn
+
+	User->>Frontend: Clicks "Login with Google/LinkedIn"
+	Frontend->>Backend: Redirect to /auth/google or /auth/linkedin
+	Backend->>Provider: Redirect to provider's OAuth URL
+	Provider->>User: User logs in and authorizes
+	User->>Provider: Submits credentials
+	Provider->>Backend: Redirect with auth code to /auth/google/callback or /auth/linkedin/callback
+	Backend->>Provider: Exchanges code for access token
+	Provider->>Backend: Returns access token and user info
+	Backend->>Database: Upsert user info
+	Backend->>Frontend: Redirect to /success
+	Frontend->>User: Shows success page
+```
+
+**Summary:**
+- The user initiates login from the frontend.
+- The backend handles the OAuth flow and securely stores user info.
+- The user is redirected to a success page after authentication.
 
 ---
