@@ -6,8 +6,8 @@ import SocialLogin from './SocialLogin';
 
 class App extends Component {
   handleSocialLogin = (provider) => {
-    alert(`Login with ${provider} clicked!`);
-    // Here you would redirect to backend endpoint for OAuth
+    // Redirect to backend OAuth endpoint
+    window.location.href = `http://localhost:3001/auth/${provider}`;
   };
 
   render() {
