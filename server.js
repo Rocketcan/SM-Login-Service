@@ -33,13 +33,20 @@ passport.deserializeUser((user, done) => {
     done(null, user);
 });
 
+
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/google/callback'
 }, (accessToken, refreshToken, profile, done) => {
-    // Here you would find or create the user in your DB
-    return done(null, profile);
+    // Store only minimal info in session
+    const user = {
+        id: profile.id,
+        displayName: profile.displayName,
+        email: profile.emails && profile.emails[0] ? profile.emails[0].value : null,
+        provider: 'google'
+    };
+    return done(null, user);
 }));
 
 passport.use(new LinkedInStrategy({
@@ -48,9 +55,22 @@ passport.use(new LinkedInStrategy({
     callbackURL: '/auth/linkedin/callback',
     scope: ['r_emailaddress', 'r_liteprofile']
 }, (accessToken, refreshToken, profile, done) => {
-    // Here you would find or create the user in your DB
-    return done(null, profile);
+    const user = {
+        id: profile.id,
+        displayName: profile.displayName,
+        email: profile.emails && profile.emails[0] ? profile.emails[0].value : null,
+        provider: 'linkedin'
+    };
+    return done(null, user);
 }));
+// Endpoint to get current user info (if authenticated)
+app.get('/api/user', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json(req.user);
+    } else {
+        res.status(401).json({ error: 'Not authenticated' });
+    }
+});
 
 
 app.get('/', (req, res) => {
@@ -59,23 +79,38 @@ app.get('/', (req, res) => {
 
 // Google OAuth routes
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
         // Successful authentication
-        res.redirect('/'); // Or send user info/token as needed
+        res.redirect('/success');
     }
 );
 
 // LinkedIn OAuth routes
 app.get('/auth/linkedin', passport.authenticate('linkedin'));
+
 app.get('/auth/linkedin/callback',
     passport.authenticate('linkedin', { failureRedirect: '/' }),
     (req, res) => {
         // Successful authentication
-        res.redirect('/'); // Or send user info/token as needed
+        res.redirect('/success');
     }
 );
+
+// Success page for authenticated users
+app.get('/success', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.send(`
+            <h1>Authentication Successful</h1>
+            <p>Welcome, ${req.user.displayName || 'User'}!</p>
+            <p>Provider: ${req.user.provider}</p>
+        `);
+    } else {
+        res.redirect('/');
+    }
+});
 
 connectDB().then(() => {
     app.listen(PORT, () => {
