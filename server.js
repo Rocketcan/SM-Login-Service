@@ -1,3 +1,8 @@
+// Serve privacy policy for OAuth providers
+const path = require('path');
+app.get('/privacy-policy', (req, res) => {
+    res.sendFile(path.join(__dirname, 'privacy.html'));
+});
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
@@ -133,26 +138,66 @@ app.get('/', (req, res) => {
 });
 
 // Google OAuth routes
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
-    (req, res) => {
-        // Successful authentication
-        res.redirect('/success');
+app.get('/auth/google', (req, res, next) => {
+    try {
+        passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+    } catch (err) {
+        console.error('Error in /auth/google:', err);
+        res.status(500).send('<h2>Internal Server Error during Google authentication.</h2>');
     }
-);
+});
+
+
+app.get('/auth/google/callback', (req, res, next) => {
+    passport.authenticate('google', { failureRedirect: '/' }, (err, user, info) => {
+        if (err) {
+            console.error('Google callback error:', err);
+            return res.status(500).send('<h2>Google authentication failed.</h2>');
+        }
+        if (!user) {
+            return res.redirect('/');
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error('Login error after Google callback:', err);
+                return res.status(500).send('<h2>Login failed after Google authentication.</h2>');
+            }
+            res.redirect('/success');
+        });
+    })(req, res, next);
+});
 
 // LinkedIn OAuth routes
-app.get('/auth/linkedin', passport.authenticate('linkedin'));
 
-app.get('/auth/linkedin/callback',
-    passport.authenticate('linkedin', { failureRedirect: '/' }),
-    (req, res) => {
-        // Successful authentication
-        res.redirect('/success');
+app.get('/auth/linkedin', (req, res, next) => {
+    try {
+        passport.authenticate('linkedin')(req, res, next);
+    } catch (err) {
+        console.error('Error in /auth/linkedin:', err);
+        res.status(500).send('<h2>Internal Server Error during LinkedIn authentication.</h2>');
     }
-);
+});
+
+
+app.get('/auth/linkedin/callback', (req, res, next) => {
+    passport.authenticate('linkedin', { failureRedirect: '/' }, (err, user, info) => {
+        if (err) {
+            console.error('LinkedIn callback error:', err);
+            return res.status(500).send('<h2>LinkedIn authentication failed.</h2>');
+        }
+        if (!user) {
+            return res.redirect('/');
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error('Login error after LinkedIn callback:', err);
+                return res.status(500).send('<h2>Login failed after LinkedIn authentication.</h2>');
+            }
+            res.redirect('/success');
+        });
+    })(req, res, next);
+});
 
 // Success page for authenticated users
 app.get('/success', (req, res) => {
