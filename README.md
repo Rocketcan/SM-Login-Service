@@ -87,6 +87,45 @@ The frontend will run on [http://localhost:3000](http://localhost:3000) by defau
 - Click a social login button to authenticate.
 - After login, you will be redirected to a success page with a button to view your user info.
 
+## Social Media Login Configuration
+
+### Google OAuth Setup
+1. Go to the [Google Developer Console](https://console.developers.google.com/).
+2. Create a new project (or select an existing one).
+3. Go to "APIs & Services" > "Credentials" and click "Create Credentials" > "OAuth client ID".
+4. Set the application type to "Web application".
+5. Add the following to "Authorized redirect URIs":
+	- `http://localhost:3001/auth/google/callback`
+6. Copy the generated `Client ID` and `Client Secret` into your `.env` file as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+
+### LinkedIn OAuth Setup
+1. Go to the [LinkedIn Developer Portal](https://www.linkedin.com/developers/).
+2. Create a new app.
+3. In "Auth" or "OAuth 2.0 settings", add the following to "Redirect URLs":
+	- `http://localhost:3001/auth/linkedin/callback`
+4. Set the "Privacy Policy URL" to: [https://rocketcan.github.io/SM-Login-Service/privacy-policy/](https://rocketcan.github.io/SM-Login-Service/privacy-policy/)
+5. Copy the generated `Client ID` and `Client Secret` into your `.env` file as `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`.
+
+## Troubleshooting Guide
+
+**Problem:** MongoDB connection error (ECONNREFUSED)
+- Solution: Make sure MongoDB is running (`net start MongoDB` or `mongod`).
+
+**Problem:** Google/LinkedIn login redirects to an error page
+- Solution: Double-check that the redirect URI in your provider dashboard matches exactly what is in your code (including port and path).
+- For LinkedIn, ensure the privacy policy URL is public and correct.
+- Make sure you are using the correct client IDs and secrets in your `.env` file.
+
+**Problem:** LinkedIn login shows "Your LinkedIn Network Will Be Back Soon"
+- Solution: Your app may be missing required info or is restricted. Ensure all required fields (privacy policy, company, logo, etc.) are filled out in the LinkedIn developer portal.
+- Try logging in with the LinkedIn account that owns the app.
+
+**Problem:** After login, user info is not shown or is missing
+- Solution: Make sure MongoDB is running and the backend is connected. Check the `/api/user` endpoint for errors.
+
+**Problem:** Privacy Policy URL not accepted by LinkedIn
+- Solution: Use the public GitHub Pages URL provided above. Localhost URLs will not work.
+
 ## Social Media Authentication Flow Diagrams
 
 ### Google/LinkedIn OAuth 2.0 Flow
