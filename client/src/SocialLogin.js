@@ -1,9 +1,11 @@
 import React from 'react';
 import './SocialLogin.css';
+import googleLogo from './assets/google.png';
+import linkedInLogo from './assets/linkedinlogo.png';
 
 const SOCIALS = [
-  { name: 'Google', icon: '🔵', provider: 'google' },
-  { name: 'Facebook', icon: '🔷', provider: 'facebook' }
+  { name: 'Google', icon: googleLogo, provider: 'google' },
+  { name: 'LinkedIn', icon: linkedInLogo, provider: 'linkedin' }
 ];
 
 export default function SocialLogin({ onLogin }) {
@@ -17,7 +19,7 @@ export default function SocialLogin({ onLogin }) {
             className={`social-btn social-btn-${social.provider}`}
             onClick={() => onLogin && onLogin(social.provider)}
           >
-            <span className="icon">{social.icon}</span> Login with {social.name}
+            <img src={social.icon} alt={`${social.name} logo`} className="icon" /> Login with {social.name}
           </button>
         ))}
       </div>
