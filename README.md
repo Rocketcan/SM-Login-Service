@@ -9,7 +9,7 @@ This service authenticates user logins via social media sites using a MERN archi
 	cp .env.example .env
 	```
 
-2. Open the new `.env` file and fill in your own credentials for Google and LinkedIn OAuth, as well as a random session secret:
+2. Open the new `.env` file and fill in your own credentials for Google and LinkedIn OAuth:
 
 	- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: Get these from the Google Developer Console.
 	- `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`: Get these from the LinkedIn Developer Portal.
