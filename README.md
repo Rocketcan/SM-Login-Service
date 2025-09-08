@@ -13,7 +13,6 @@ This service authenticates user logins via social media sites using a MERN archi
 
 	- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: Get these from the Google Developer Console.
 	- `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`: Get these from the LinkedIn Developer Portal.
-	- `SESSION_SECRET`: Use any long, random string.
 
 3. Save the `.env` file. Do not share this file or commit it to version control.
 
